@@ -1,0 +1,586 @@
+{
+	"info": {
+		"_postman_id": "d4515c20-483c-41d9-84eb-378160b91ef7",
+		"name": "TODO-APP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3378316"
+	},
+	"item": [
+		{
+			"name": "Todos",
+			"item": [
+				{
+					"name": "add-todo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"let parentTodoId = responseJson.id;",
+									"pm.environment.set(\"PARENT_TODO_ID\", parentTodoId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Meyve Al\",\n    \"description\": \"Meyve alman gerekiyor\",\n    \"projectId\": \"{{PROJECT_ID}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/todo",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"todo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add-sub-todo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Test Turuncu Mandalina AL\",\n    \"description\": \"Mandalina Al\",\n    \"projectId\": \"{{PROJECT_ID}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/todo/{{PARENT_TODO_ID}}",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"todo",
+								"{{PARENT_TODO_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-todo-by-id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"İnce Kabuklu  AL\",\n    \"description\": \"Mandalina Al\",\n    \"projectId\": \"{{PROJECT_ID}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/todo/19ba95eb-17d8-4735-ba87-da4d58eae35a",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"todo",
+								"19ba95eb-17d8-4735-ba87-da4d58eae35a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "complete-todo-by-id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/todo/6f15da21-0b89-4cdb-9356-9fae62c82038/complete",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"todo",
+								"6f15da21-0b89-4cdb-9356-9fae62c82038",
+								"complete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-todo-by-id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/todo/8f0be542-5b46-4757-85e0-01162569bc52",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"todo",
+								"8f0be542-5b46-4757-85e0-01162569bc52"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-todos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Sarı Manadalina Al\",\n    \"description\": \"Lütfen sarı Manadalina Almayı unutma\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/todo?projectId={{PROJECT_ID}}",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"todo"
+							],
+							"query": [
+								{
+									"key": "projectId",
+									"value": "{{PROJECT_ID}}"
+								},
+								{
+									"key": "completed",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-by-todos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/todo/bcabc526-fe27-4c5a-8e59-7f23596f5ef9",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"todo",
+								"bcabc526-fe27-4c5a-8e59-7f23596f5ef9"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "project",
+			"item": [
+				{
+					"name": "add-project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"let projectId = responseJson.id;",
+									"pm.environment.set(\"PROJECT_ID\", projectId);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{PROJECT_NAME}}\",\n    \"description\": \"{{PROJECT_DESCRIPTION}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/project",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"project"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Ev projesi\",\n    \"description\": \"Evim Evim güzel evim\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/project/{{PROJECT_ID}}",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"project",
+								"{{PROJECT_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/project/{{PROJECT_ID}}",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"project",
+								"{{PROJECT_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-project-by-id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/project/{{PROJECT_ID}}",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"project",
+								"{{PROJECT_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-projects",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/project/all",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"project",
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"let accessToken = responseJson.accessToken;",
+									"pm.environment.set(\"TOKEN\", accessToken);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{EMAIL}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/login",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var requestBody = pm.request.body.raw;",
+									"var jsonData = JSON.parse(requestBody);",
+									"pm.environment.set(\"PASSWORD\", jsonData.password);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{FIRST_NAME}}\",\n    \"lastName\": \"{{LAST_NAME}}\",\n    \"email\": \"{{EMAIL}}\",\n    \"password\": \"Test.1234!!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APIURL}}/register",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logedin-user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APIURL}}/user",
+							"host": [
+								"{{APIURL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
