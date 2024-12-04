@@ -1,10 +1,10 @@
 version: '3.8'
 
 services:
-  couchbase1:
+  couchbase:
     build:
       context: ./couchbase
-    container_name: couchbase1
+    container_name: couchbase
     environment:
       - COUCHBASE_ADMINISTRATOR_USERNAME=Administrator
       - COUCHBASE_ADMINISTRATOR_PASSWORD=password
@@ -14,21 +14,38 @@ services:
       - 8091-8093:8091-8093
       - 11210-11211:11210-11211
     volumes:
-      - couchbase1-data:/opt/couchbase/var
+      - todo-data:/opt/couchbase/var
       - ./couchbase/configure-node.sh:/opt/couchbase/configure-node.sh
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8091/ui/index.html"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8091/ui/index.html" ]
       interval: 30s
       timeout: 10s
       retries: 20
       start_period: 120s
     networks:
-      - couchbase-network
-    command: ["sh", "-c", "couchbase-server & sleep 15 && sh /opt/couchbase/configure-node.sh && tail -f /dev/null"]
+      todo-network:
+        aliases:
+          - couchbase1
+    command: [ "sh", "-c", "couchbase-server & sleep 15 && sh /opt/couchbase/configure-node.sh && tail -f /dev/null" ]
+
+  todo-list-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: todo-list-app
+    ports:
+      - 8080:8080
+    depends_on:
+      - couchbase
+    environment:
+      - COUCHBASE_HOST=couchbase1
+    networks:
+      - todo-network
+    restart: always
 
 volumes:
-  couchbase1-data:
+  todo-data:
 
 networks:
-  couchbase-network:
+  todo-network:
     driver: bridge

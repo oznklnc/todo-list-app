@@ -23,8 +23,17 @@ couchbase.scopeName=_default
 ## Running the Application
 ### Using Maven
 1. Navigate to the project directory.
-2. Run the application:
-   `mvn spring-boot:run`
+2. Run the application:`mvn spring-boot:run`
+
+### Using Docker
+1. Build the all Docker images and uses for local. You can use the following command: 
+```
+docker-compose up -f docker-compose-local.yml -d
+```
+2. Build the all Docker images and uses from dockerhub. You can use the following command: 
+``` 
+docker-compose up -f docker-compose-todo-app.yml -d
+``` 
 
 
 ## Running Tests

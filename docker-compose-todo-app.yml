@@ -29,9 +29,7 @@ services:
     command: [ "sh", "-c", "couchbase-server & sleep 15 && sh /opt/couchbase/configure-node.sh && tail -f /dev/null" ]
 
   todo-list-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: oznklnc/todoapp
     container_name: todo-list-app
     ports:
       - 8080:8080
