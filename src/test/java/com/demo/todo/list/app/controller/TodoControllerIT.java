@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class TodoControllerTest extends IntegrationBaseTest {
+class TodoControllerIT extends IntegrationBaseTest {
 
     @MockitoBean
     TodoBusinessService todoBusinessService;

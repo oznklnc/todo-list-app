@@ -1,4 +1,4 @@
-package com.springboot.couchbase.springbootrealworld.runners;
+package com.demo.todo.list.app.initializer;
 
 import com.couchbase.client.core.error.IndexesNotReadyException;
 import com.couchbase.client.core.retry.reactor.Retry;
@@ -9,6 +9,7 @@ import com.couchbase.client.java.http.HttpPath;
 import com.couchbase.client.java.http.HttpResponse;
 import com.couchbase.client.java.http.HttpTarget;
 import com.couchbase.client.java.json.JsonObject;
+import com.demo.todo.list.app.model.dto.IndexInformationDto;
 import reactor.core.publisher.Mono;
 
 import java.sql.SQLException;
@@ -25,6 +26,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 class IndexCommons {
+
     static void waitUntilReady(Cluster cluster, String bucketName, Duration timeout) {
         waitInner(timeout, () -> failIfIndexesOffline(cluster.httpClient(), bucketName));
     }
@@ -46,7 +48,7 @@ class IndexCommons {
     }
 
     private static void failIfIndexesPresent(CouchbaseHttpClient httpClient, String bucketName) {
-        Map<String, String> matchingIndexes = getMatchingIndexInfo(httpClient, bucketName).stream().collect(toMap(IndexInfo::getQualified, IndexInfo::getStatus));
+        Map<String, String> matchingIndexes = getMatchingIndexInfo(httpClient, bucketName).stream().collect(toMap(IndexInformationDto::getQualified, IndexInformationDto::getStatus));
 
         if (!matchingIndexes.isEmpty()) {
             throw new IndexesNotReadyException(matchingIndexes);
@@ -54,12 +56,12 @@ class IndexCommons {
     }
 
     private static void failIfIndexesOffline(CouchbaseHttpClient httpClient, String bucketName) throws IndexesNotReadyException {
-        List<IndexInfo> matchingIndexes = getMatchingIndexInfo(httpClient, bucketName);
+        List<IndexInformationDto> matchingIndexes = getMatchingIndexInfo(httpClient, bucketName);
         if (matchingIndexes.isEmpty()) {
             throw new IndexesNotReadyException(singletonMap("#primary", "notFound"));
         }
 
-        final Map<String, String> offlineIndexNameToState = matchingIndexes.stream().filter(idx -> !"Ready".equals(idx.status)).collect(toMap(IndexInfo::getQualified, IndexInfo::getStatus));
+        final Map<String, String> offlineIndexNameToState = matchingIndexes.stream().filter(idx -> !"Ready".equals(idx.status)).collect(toMap(IndexInformationDto::getQualified, IndexInformationDto::getStatus));
 
         if (!offlineIndexNameToState.isEmpty()) {
             throw new IndexesNotReadyException(offlineIndexNameToState);
@@ -80,7 +82,7 @@ class IndexCommons {
         }
     }
 
-    private static List<IndexInfo> getMatchingIndexInfo(CouchbaseHttpClient httpClient, String bucketName) {
+    private static List<IndexInformationDto> getMatchingIndexInfo(CouchbaseHttpClient httpClient, String bucketName) {
         List<Object> list;
         try {
             list = getIndexes(httpClient);
@@ -88,7 +90,11 @@ class IndexCommons {
             throw new RuntimeException(e);
         }
 
-        return list.stream().filter(i -> i instanceof Map<?, ?>).map(i -> IndexInfo.create((Map<?, ?>) i)).filter(i -> bucketName.equals(i.bucket) && "#primary".equals(i.name)).collect(toList());
+        return list.stream()
+                .filter(i -> i instanceof Map<?, ?>)
+                .map(i -> IndexInformationDto.create((Map<?, ?>) i))
+                .filter(i -> bucketName.equals(i.bucket) && "#primary".equals(i.name))
+                .collect(toList());
     }
 }
 

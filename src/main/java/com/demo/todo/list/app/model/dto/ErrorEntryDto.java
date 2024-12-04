@@ -1,15 +1,11 @@
-package com.demo.todo.list.app.model;
+package com.demo.todo.list.app.model.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
-@Builder
 @RequiredArgsConstructor
-public class ErrorEntry {
+public class ErrorEntryDto {
 
     private final String errorCode;
     private final String message;

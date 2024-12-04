@@ -1,19 +1,22 @@
-package com.springboot.couchbase.springbootrealworld.runners;
+package com.demo.todo.list.app.initializer;
 
 import com.couchbase.client.core.error.CouchbaseException;
 import com.couchbase.client.core.error.context.ErrorContext;
-import org.jetbrains.annotations.NotNull;
+import com.demo.todo.list.app.model.dto.ErrorEntryDto;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 
+import static com.demo.todo.list.app.constant.TodoListConstants.UNKNOWN;
+
+
+@Getter
+@RequiredArgsConstructor
 public class CouchbaseError {
-    private static final String UNKNOWN = "UNKNOWN";
 
-    private final List<ErrorEntry> errorEntries;
-
-    public CouchbaseError(List<ErrorEntry> errorEntries) {
-        this.errorEntries = errorEntries;
-    }
+    private final List<ErrorEntryDto> errorEntries;
 
     public static CouchbaseError create(@NotNull CouchbaseException exception) {
         ErrorContext context = exception.context();
@@ -26,7 +29,7 @@ public class CouchbaseError {
         if (!(errors instanceof List<?>)) {
             return unknown(exception);
         }
-        List<ErrorEntry> entries = new ArrayList<>();
+        List<ErrorEntryDto> entries = new ArrayList<>();
         for (Object errorObject : (List<?>) errors) {
             if (!(errorObject instanceof Map<?, ?>)) {
                 return unknown(exception);
@@ -36,38 +39,20 @@ public class CouchbaseError {
             if (errorCode == null) {
                 continue;
             }
-            entries.add(new ErrorEntry(errorCode.toString(), String.valueOf(errorMap.get("message"))));
+            entries.add(new ErrorEntryDto(errorCode.toString(), String.valueOf(errorMap.get("message"))));
         }
         return new CouchbaseError(entries);
     }
 
     private static CouchbaseError unknown(@NotNull CouchbaseException exception) {
-        return new CouchbaseError(Collections.singletonList(new ErrorEntry(UNKNOWN, exception.toString())));
+        return new CouchbaseError(
+                Collections.singletonList(new ErrorEntryDto(UNKNOWN, exception.toString()))
+        );
     }
 
-    public List<ErrorEntry> getErrorEntries() {
-        return errorEntries;
-    }
-
-    public ErrorEntry getFirstError() {
-        return errorEntries.stream().findFirst().orElse(null);
-    }
-
-    public static class ErrorEntry {
-        private final String errorCode;
-        private final String message;
-
-        private ErrorEntry(String errorCode, String message) {
-            this.errorCode = errorCode;
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getErrorCode() {
-            return errorCode;
-        }
+    public ErrorEntryDto getFirstError() {
+        return errorEntries.stream()
+                .findFirst()
+                .orElse(null);
     }
 }

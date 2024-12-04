@@ -1,4 +1,4 @@
-package com.springboot.couchbase.springbootrealworld.runners;
+package com.demo.todo.list.app.initializer;
 
 
 import com.couchbase.client.core.error.CollectionExistsException;
@@ -11,25 +11,21 @@ import com.couchbase.client.java.manager.collection.CollectionManager;
 import com.couchbase.client.java.manager.collection.CollectionSpec;
 import com.couchbase.client.java.manager.query.CreatePrimaryQueryIndexOptions;
 import com.couchbase.client.java.manager.query.WatchQueryIndexesOptions;
-import com.couchbase.client.java.query.QueryResult;
-import com.springboot.couchbase.springbootrealworld.configuration.ClusterProperties;
-import com.springboot.couchbase.springbootrealworld.domain.article.entity.ArticleDocument;
-import com.springboot.couchbase.springbootrealworld.domain.article.entity.CommentDocument;
-import com.springboot.couchbase.springbootrealworld.domain.article.entity.FavoriteDocument;
-import com.springboot.couchbase.springbootrealworld.domain.profile.entity.FollowDocument;
-import com.springboot.couchbase.springbootrealworld.domain.tag.entity.ArticleTagRelationDocument;
-import com.springboot.couchbase.springbootrealworld.domain.user.entity.UserDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.demo.todo.list.app.config.properties.CouchbaseProperties;
+import com.demo.todo.list.app.entity.ProjectDocument;
+import com.demo.todo.list.app.entity.TodoDocument;
+import com.demo.todo.list.app.entity.UserDocument;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.couchbase.core.CouchbaseTemplate;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static com.couchbase.client.core.util.CbThrowables.findCause;
 import static com.couchbase.client.core.util.CbThrowables.hasCause;
@@ -38,15 +34,14 @@ import static com.couchbase.client.core.util.CbThrowables.hasCause;
 /**
  * This class run after the application startup. It automatically sets up all needed indexes
  */
+@Slf4j
 @Component
+@Profile("!unittest")
+@RequiredArgsConstructor
 public class DBSetupRunners implements CommandLineRunner {
 
-    Logger logger = LoggerFactory.getLogger(DBSetupRunners.class);
-
-    @Autowired
-    private CouchbaseTemplate couchbaseTemplate;
-    @Autowired
-    private ClusterProperties clusterProperties;
+    private final CouchbaseTemplate couchbaseTemplate;
+    private final CouchbaseProperties couchbaseProperties;
 
     private static final WatchQueryIndexesOptions WATCH_PRIMARY = WatchQueryIndexesOptions
             .watchQueryIndexesOptions()
@@ -59,29 +54,28 @@ public class DBSetupRunners implements CommandLineRunner {
         Cluster cluster = couchbaseTemplate.getCouchbaseClientFactory().getCluster();
         Bucket bucket = couchbaseTemplate.getCouchbaseClientFactory().getBucket();
 
-        String defaultBucket = clusterProperties.getDefaultBucket();
-        String defaultScope = clusterProperties.getDefaultScope();
+        String defaultBucket = couchbaseProperties.getBucketName();
+        String defaultScope = couchbaseProperties.getScopeName();
         try {
             cluster.queryIndexes().createPrimaryIndex(defaultBucket);
-            logger.info("Created primary index" + defaultBucket);
+            log.info("Created primary index" + defaultBucket);
         } catch (Exception e) {
-            logger.info("Primary index already exists on bucket " + defaultBucket);
+            log.info("Primary index already exists on bucket " + defaultBucket);
         }
 
-        var collections = Arrays.asList(UserDocument.USER_COLLECTION_NAME, ArticleDocument.ARTICLE_COLLECTION_NAME, FavoriteDocument.FAVORITE_COLLECTION_NAME,
-                CommentDocument.COMMENT_COLLECTION_NAME, ArticleTagRelationDocument.TAG_COLLECTION_NAME, FollowDocument.FOLLOW_COLLECTION_NANE);
+        var collections = List.of(UserDocument.USER_COLLECTION_NAME, ProjectDocument.PROJECT_COLLECTION_NAME, TodoDocument.TODO_COLLECTION_NAME);
 
         collections.stream().forEach(col -> createCollection(bucket, defaultScope, col));
         collections.stream().forEach(col -> setupPrimaryIndex(cluster, defaultBucket, defaultScope, col));
 
 
         try {
-            final QueryResult result = cluster.query("CREATE INDEX default_profile_title_index ON " + bucket.name() + "._default." + ArticleDocument.ARTICLE_COLLECTION_NAME + "(title)");
+            //final QueryResult result = cluster.query("CREATE INDEX default_profile_title_index ON " + bucket.name() + "._default." + ArticleDocument.ARTICLE_COLLECTION_NAME + "(title)");
             Thread.sleep(1000);
         } catch (Exception e) {
-            logger.info(String.format("Failed to create secondary index on article.title: %s", e.getMessage()));
+            log.info(String.format("Failed to create secondary index on article.title: %s", e.getMessage()));
         }
-        logger.info("Application is ready.");
+        log.info("Application is ready.");
     }
 
     private void setupPrimaryIndex(Cluster cluster, String bucketName, String scope, String collectionName) {
@@ -112,9 +106,9 @@ public class DBSetupRunners implements CommandLineRunner {
         try {
             CollectionSpec spec = CollectionSpec.create(collectionName, scope);
             collectionManager.createCollection(spec);
-            logger.info("Created collection '" + spec.name() + "' in scope '" + spec.scopeName() + "' of bucket '" + bucket.name() + "'");
+            log.info("Created collection '" + spec.name() + "' in scope '" + spec.scopeName() + "' of bucket '" + bucket.name() + "'");
         } catch (CollectionExistsException e) {
-            logger.info(String.format("Collection <%s> already exists", collectionName));
+            log.info("Collection{} already exists", collectionName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

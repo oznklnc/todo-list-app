@@ -1,4 +1,4 @@
-package com.demo.todo.list.app.config;
+package com.demo.todo.list.app.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
