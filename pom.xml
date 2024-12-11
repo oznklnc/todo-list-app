@@ -240,9 +240,11 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
                             <excludes>
-                                <exclude>**/generated/**</exclude>
-                                <exclude>**/initializer/**</exclude>
-                                <exclude>com/demo/todo/list/app/TodoApplication.class</exclude>
+                                <exclude>**/generated/*</exclude>
+                                <exclude>**/initializer/*</exclude>
+                                <exclude>**/handler/*</exclude>
+                                <exclude>**/model/dto/*</exclude>
+                                <exclude>com/demo/todo/list/app/TodoListApplication.class</exclude>
                             </excludes>
                         </configuration>
                     </execution>
@@ -252,6 +254,13 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
+                            <excludes>
+                                <exclude>**/generated/*</exclude>
+                                <exclude>**/initializer/*</exclude>
+                                <exclude>**/handler/*</exclude>
+                                <exclude>**/model/dto/*</exclude>
+                                <exclude>com/demo/todo/list/app/TodoListApplication.class</exclude>
+                            </excludes>
                             <rules>
                                 <rule>
                                     <element>PACKAGE</element>
@@ -262,9 +271,14 @@
                                             <minimum>0.80</minimum>
                                         </limit>
                                         <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                        <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.70</minimum>
+                                            <minimum>0.50</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

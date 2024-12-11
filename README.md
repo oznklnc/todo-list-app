@@ -44,12 +44,12 @@ mvn test
 ## Build your app
 To build the application, use the following Maven command:
 `
-mvn clean install
+mvn clean install -Pall-tests
 `
 ## Run the test suite
 To run the test suite, use the following Maven command:
 `
-mvn test
+mvn test -Pall-tests
 `
 
 ## Run your app with dependencies
